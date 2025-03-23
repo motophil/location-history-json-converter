@@ -400,6 +400,36 @@ def _convert_to_pre_2025(data):
     return pre2025data
 
 
+def _convert_timeline_edits_to_pre_2025(data):
+    """Converts the data as of 2025 with timelineEdits key to the earlier format"""
+
+    pre2025data = {}
+    pre2025data["locations"] = []
+
+    for item in data:
+        if "rawSignal" in item:
+            rawsignal = item["rawSignal"]
+            if "signal" in rawsignal:
+                signal = rawsignal["signal"]
+                if "position" in signal:
+                    location = signal["position"]
+                    pre2025location = {}
+                    pre2025location["latitudeE7"] = location["point"]["latE7"]
+                    pre2025location["longitudeE7"] = location["point"]["lngE7"]
+                    pre2025location["timestamp"] = location["timestamp"]
+                    if "accuracyMm" in location:
+                        pre2025location["accuracy"] = location["accuracyMm"] / 1000
+                    if "altitudeMeters" in location:
+                        pre2025location["altitude"] = int(location["altitudeMeters"])
+                    if "source" in location:
+                        pre2025location["source"] = location["source"]
+                    if "speedMetersPerSecond" in location:
+                        pre2025location["velocity"] = int(location["speedMetersPerSecond"])
+                    pre2025data["locations"].append(pre2025location)
+
+    return pre2025data
+
+
 def convert(locations, output, format="kml",
             js_variable="locationJsonData", separator=",",
             start_date=None, end_date=None, accuracy=None, polygon=None,
@@ -636,10 +666,15 @@ def main():
                 items = ijson.items(f, "locations.item")
                 if not len(list(items)):
                     f.seek(0)
-                    if args.legacy:
-                        data = _convert_legacy_to_pre_2025(ijson.items(f, "semanticSegments.item"))
+                    if not len(list(ijson.items(f, "timelineEdits.item"))):
+                        f.seek(0)
+                        if args.legacy:
+                            data = _convert_legacy_to_pre_2025(ijson.items(f, "semanticSegments.item"))
+                        else:
+                            data = _convert_to_pre_2025(ijson.items(f, "rawSignals.item"))
                     else:
-                        data = _convert_to_pre_2025(ijson.items(f, "rawSignals.item"))
+                        f.seek(0)
+                        data = _convert_timeline_edits_to_pre_2025(ijson.items(f, "timelineEdits.item"))
                     items = data["locations"]
 
         except OSError as error:
@@ -664,10 +699,13 @@ def main():
             return
         
         if not "locations" in data:
-            if args.legacy:
-                data = _convert_legacy_to_pre_2025(data["semanticSegments"])
+            if "timelineEdits" in data:
+                data = _convert_timeline_edits_to_pre_2025(data["timelineEdits"])
             else:
-                data = _convert_to_pre_2025(data["rawSignals"])
+                if args.legacy:
+                    data = _convert_legacy_to_pre_2025(data["semanticSegments"])
+                else:
+                    data = _convert_to_pre_2025(data["rawSignals"])
 
         items = data["locations"]
 
