@@ -29,7 +29,7 @@ The files exported here can still be converted.
 
 ### Usage
 ```
-python location_history_json_converter.py [-h]
+usage: location_history_json_converter.py [-h]
                                           [-f {kml,json,js,jsonfull,jsfull,csv,csvfull,csvfullest,gpx,gpxtracks}]
                                           [-i] [-s STARTDATE] [-e ENDDATE] [--starttime STARTTIME]
                                           [--endtime ENDTIME] [-a ACCURACY] [-c] [-l] [-v VARIABLE]
