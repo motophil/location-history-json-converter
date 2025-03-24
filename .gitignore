@@ -5,3 +5,5 @@
 *.js
 *.gpxtracks
 *.csv
+*~
+*.bak
