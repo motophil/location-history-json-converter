@@ -348,12 +348,12 @@ def _write_footer(output, format):
 
 def _get_latitudeE7(point):
     """Gets the latitude * 10E7 from a lat, lon pair in a string"""
-    return int(float(point.replace('°', '').replace(' ', '').split(",")[0]) * 10000000)
+    return int(float(point.replace('Â', '').replace('°', '').replace(' ', '').split(",")[0]) * 10000000)
 
 
 def _get_longitudeE7(point):
     """Gets the longitude * 10E7 from a lat, lon pair in a string"""
-    return int(float(point.replace('°', '').replace(' ', '').split(",")[1]) * 10000000)
+    return int(float(point.replace('Â', '').replace('°', '').replace(' ', '').split(",")[1]) * 10000000)
 
 
 def _convert_legacy_to_pre_2025(data):
