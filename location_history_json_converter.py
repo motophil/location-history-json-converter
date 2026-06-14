@@ -42,11 +42,10 @@ except ImportError:
 else:
     shapely_available = True
 
-
 def _get_timestamp(s):
     if "timestampMs" in s:
-        return datetime.fromtimestamp(int(s["timestampMs"]) / 1000)
-    return datetime.fromtimestamp(int(isoparse(s["timestamp"]).timestamp()))
+        return datetime.fromtimestamp(int(s["timestampMs"]) / 1000, tz=UTC)
+    return datetime.fromtimestamp(int(isoparse(s["timestamp"]).timestamp()), tz=UTC)
 
 def _valid_date(s):
     try:
@@ -518,7 +517,8 @@ def convert(locations, output, format="kml",
         last_loc = item
         added = added + 1
 
-    _write_footer(output, format)
+    if not (first and format in ("gpx", "gpxtracks", "kml")):
+        _write_footer(output, format)    
     print("")
 
 
@@ -717,12 +717,16 @@ def main():
 
     if args.startdate and args.starttime:
         args.startdate = args.startdate + timedelta(hours=args.starttime.hour,minutes=args.starttime.minute)
+    
+    if args.startdate:
+        args.startdate = args.startdate.replace(tzinfo=UTC)
 
     if args.enddate:
         if args.endtime:
             args.enddate = args.enddate + timedelta(hours=args.endtime.hour,minutes=args.endtime.minute) - timedelta(microseconds=1)
         else:
             args.enddate = args.enddate.replace(hour=23, minute=59, second=59, microsecond=999999)
+        args.enddate = args.enddate.replace(tzinfo=UTC)
 
     convert(
         items, f_out,
