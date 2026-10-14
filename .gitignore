@@ -5,3 +5,6 @@
 *.js
 *.gpxtracks
 *.csv
+*~
+*.bak
+__pycache__

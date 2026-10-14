@@ -1,8 +1,15 @@
 # Location History JSON Converter
 
-This Python script takes the JSON file of your location history which you can get via
-[Google Takeout](https://takeout.google.com/settings/takeout/custom/location_history)
-and converts it into other formats.
+This Python script takes the JSON file of your google maps location history and converts it into other
+formats.
+
+You can export the encrypted location history from Android devices as
+described
+[here](https://support.google.com/maps/thread/280205453/how-do-i-download-my-timeline-history).
+
+You used to be able to get the location history stored on google servers
+via [Google Takeout](https://takeout.google.com/settings/takeout/custom/location_history).
+The files exported here can still be converted.
 
 ### Requirements
 
@@ -16,30 +23,47 @@ and converts it into other formats.
 
    See below if you encounter issues installing the Shapely package
 
-*  Request your location history via [Google Takeout](https://takeout.google.com/settings/takeout/custom/location_history)
-   and once the package is ready, download and unzip it.
+*  Export the encrypted location history from Android devices as described [here](https://support.google.com/maps/thread/280205453/how-do-i-download-my-timeline-history).
 
-   I find it easiest to place the `Location History.json` in the same folder where the script is located.
+   I find it easiest to place the exported json file in the same folder where the script is located.
 
 ### Usage
 ```
-python location_history_json_converter.py input output [-h] [-f {format, see below}]
+python location_history_json_converter.py [-h]
+                                          [-f {kml,json,js,jsonfull,jsfull,csv,csvfull,csvfullest,gpx,gpxtracks}]
+                                          [-i] [-s STARTDATE] [-e ENDDATE] [--starttime STARTTIME]
+                                          [--endtime ENDTIME] [-a ACCURACY] [-c] [-l] [-v VARIABLE]
+                                          [--separator SEPARATOR] [-p [lat,lon ...]]
+                                          input output
 
-input                Input File (Location History.json)
-output               Output File (will be overwritten!)
+positional arguments:
+  input                 Input File (Location History.json)
+  output                Output File (will be overwritten!)
 
-optional arguments:
-  -h, --help                             Show this help message and exit
-  -f, --format {format, see below}       Format of the output
-  -i, --iterative                        Loads the JSON file iteratively
-  -s, --startdate STARTDATE              The Start Date - format YYYY-MM-DD (0h00)
-  -e, --enddate ENDDATE                  The End Date - format YYYY-MM-DD (0h00)
-  -a, --accuracy ACCURACY                Maximum Accuracy (in meters), lower is better
-  -c, --chronological                    Sort items in chronological order
-  -v, --variable VARIABLE                Variable name for js export
-      --separator SEPARATOR              Separator to be used for CSV formats, defaults to comma
-  -p, --polygon [lat,lon [lat,lon ...]]  List of points (lat, lon) that create a polygon.
-                                         If two points are given a rectangle is created.
+options:
+  -h, --help            show this help message and exit
+  -f {kml,json,js,jsonfull,jsfull,csv,csvfull,csvfullest,gpx,gpxtracks}, --format {kml,json,js,jsonfull,jsfull,csv,csvfull,csvfullest,gpx,gpxtracks}
+                        Format of the output
+  -i, --iterative       Loads the JSON file iteratively, to be able to handle bigger files
+  -s STARTDATE, --startdate STARTDATE
+                        The Start Date - format YYYY-MM-DD (defaults to 0h00m)
+  -e ENDDATE, --enddate ENDDATE
+                        The End Date - format YYYY-MM-DD (defaults to 23h59m59s)
+  --starttime STARTTIME
+                        The Start Time - format HH:MM, only used if Start Date is set
+  --endtime ENDTIME     The End Time - format HH:MM, only used if End Date is set
+  -a ACCURACY, --accuracy ACCURACY
+                        Maximum accuracy (in meters), lower is better.
+  -c, --chronological   Sort items in chronological order (might be unnessary)
+  -l, --legacy          Use the legacy data in exports from the mobile device (no effect on data
+                        exported from servers)
+  -v VARIABLE, --variable VARIABLE
+                        Variable name to be used for js output
+  --separator SEPARATOR
+                        Separator to be used for CSV formats, defaults to comma
+  -p [lat,lon ...], --polygon [lat,lon ...]
+                        List of points (lat, lon) that create a polygon. If two points are given a
+                        rectangle is created.
 ```
 
 ### Special requirements for some options

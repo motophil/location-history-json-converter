@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "name": "location_history_json_converter",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.useTabStops": false,
+        "files.autoGuessEncoding": true,
+        "git.addAICoAuthor": "off",
+        "window.title": "location_history_json_converter${separator}${dirty}${activeEditorShort}",
+    }
+}
